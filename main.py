@@ -1,19 +1,19 @@
 from fastapi import FastAPI
-from pymongo import MongoClient
-import uvicorn
+from app.catalog.controller import catalog_router
+from app.orders.controller import orders_router
+from app.config.database import connect_db
 
 app = FastAPI()
 
+app.include_router(catalog_router, prefix="/catalog")
+app.include_router(orders_router, prefix="/orders")
+
 @app.on_event("startup")
 def startup_db_client():
-    app.mongodb_client = MongoClient(config[""])
-    app.database = app.mongodb_client[[config[""]]
-                                      
-@app.on_event("shutdown")
-def shutdown_db_client():
-    app.mongodb_client.close()
+    connect_db()
 
-app.include_router(api_router)
+@app.get("/")
+def read_root():
+    return {"message": "Florist API is running"}
 
-if __name__ = '__main__':
-    uvicorn.run("main:app", host='127.0.0.3', port=8000, log_level="info",reload=True)
+# Swagger UI will be automatically available at /docs
